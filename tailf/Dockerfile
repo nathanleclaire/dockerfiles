@@ -1,3 +1,3 @@
 from alpine
 
-entrypoint ["tail", "-f"]
+entrypoint ["tail", "-F"]

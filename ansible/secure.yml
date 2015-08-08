@@ -1,0 +1,40 @@
+---
+- name: Secure Ubuntu server
+  hosts: "*drop*"
+  gather_facts: False
+
+  tasks:
+    - name: Reset UFW firewall
+      ufw:
+        state=reset
+    - name: Allow SSH access on instance
+      ufw: >
+        rule=allow
+        name=OpenSSH
+    - name: Open Docker daemon, Rancher admin, and Swarm ports
+      ufw: >
+        rule=allow
+        port={{ item }}
+        proto=tcp
+      with_items:
+        - 80     # Default HTTP port
+        - 443    # Default HTTPS port
+        - 2376   # Docker daemon API port
+        - 3376   # Swarm API port
+        - 8080   # Rancher admin port
+    - name: Open Rancher agent ports
+      ufw: >
+        rule=allow
+        port={{ item }}
+        proto=udp
+      with_items:
+        - 500
+        - 4500
+    - name: Set to deny incoming requests by default
+      ufw: >
+        default=deny
+    - name: Turn on UFW
+      ufw: >
+        state=enabled
+    - name: Install fail2ban
+      apt: name=fail2ban state=present update_cache=yes

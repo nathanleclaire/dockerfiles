@@ -1,0 +1,18 @@
+---
+- name: Trick out Ubuntu server
+  hosts: "*drop*"
+  gather_facts: False
+
+  tasks:
+    - name: Install htop
+      apt: >
+        package=htop
+        state=present
+        update_cache=yes
+    - name: Install tree
+      apt: >
+        package=tree
+        state=present
+    - name: Install jq
+        package=jq
+        state=present

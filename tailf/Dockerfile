@@ -1,3 +1,4 @@
-from alpine
+from debian:jessie
 
-entrypoint ["tail", "-F"]
+add /entrypoint.sh /entrypoint.sh
+entrypoint ["/entrypoint.sh"]

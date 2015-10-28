@@ -14,5 +14,6 @@
         package=tree
         state=present
     - name: Install jq
+      apt: >
         package=jq
         state=present

@@ -19,7 +19,7 @@ def get_host_and_vars(m):
     ssh_vars = {
         "ansible_ssh_user": dminspect("{{.Driver.SSHUser}}", m),
         "ansible_ssh_port": dminspect("{{.Driver.SSHPort}}", m),
-        "ansible_ssh_private_key_file": "{}/{}".format(dminspect("{{.StorePath}}", m), "id_rsa")
+        "ansible_ssh_private_key_file": "{}/{}".format(dminspect("{{.HostOptions.AuthOptions.StorePath}}", m), "id_rsa")
     }
     data = {"hosts": hosts, "vars": ssh_vars}
     return data

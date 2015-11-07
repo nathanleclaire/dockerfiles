@@ -1,6 +1,6 @@
 ---
 - name: Set up swap file for droplet
-  hosts: "*drop*"
+  hosts: all
   vars:
     - swap_file_path: /root/swapfile
     - swap_file_size: 1GB

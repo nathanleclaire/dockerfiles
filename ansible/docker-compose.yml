@@ -1,0 +1,5 @@
+provision:
+  build: .
+  net: host
+  volumes:
+    - /root/.ssh:/hostssh

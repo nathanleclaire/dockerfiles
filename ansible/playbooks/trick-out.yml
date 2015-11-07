@@ -1,6 +1,6 @@
 ---
 - name: Trick out Ubuntu server
-  hosts: "*drop*"
+  hosts: all
   gather_facts: False
 
   tasks:

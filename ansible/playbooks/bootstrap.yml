@@ -1,0 +1,45 @@
+---
+- name: Trick out Ubuntu server
+  hosts: all
+  gather_facts: False
+
+  tasks:
+    - name: Reset UFW firewall
+      ufw:
+        state=reset
+
+    - name: Allow SSH access on instance
+      ufw: >
+        rule=allow
+        name=OpenSSH
+
+    - name: Open Docker daemon, HTTP(S), and Swarm ports
+      ufw: >
+        rule=allow
+        port={{ item }}
+        proto=tcp
+      with_items:
+        - 80     # Default HTTP port
+        - 443    # Default HTTPS port
+        - 2376   # Docker daemon API port
+        - 3376   # Swarm API port
+        - 7946   # Serf port (libnetwork)
+
+    - name: Set to deny incoming requests by default
+      ufw: >
+        default=deny
+
+    - name: Turn on UFW
+      ufw: >
+        state=enabled
+
+    - name: Install desired packages
+      apt: >
+        package={{ item }}
+        state=present
+        update_cache=yes
+      with_items:
+        - htop
+        - tree
+        - jq
+        - fail2ban

@@ -1,5 +1,11 @@
 provision:
-  build: .
+  image: nathanleclaire/ansibleprovision
   net: host
   volumes:
     - /root/.ssh:/hostssh
+consul:
+  image: progrium/consul
+  hostname: consul
+  command: -server -bootstrap
+  ports:
+    - "8500:8500"

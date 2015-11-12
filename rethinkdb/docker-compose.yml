@@ -1,0 +1,12 @@
+leader:
+  container_name: rethinkleader
+  image: rethinkdb
+  mem_limit: "450m"
+  ports:
+    - "8080:8080"
+  restart: always
+follower:
+  image: rethinkdb
+  mem_limit: "450m"
+  command: rethinkdb --join rethinkleader
+  restart: always

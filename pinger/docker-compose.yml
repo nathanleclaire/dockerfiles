@@ -1,0 +1,3 @@
+pinger:
+  image: busybox
+  command: ping google.com

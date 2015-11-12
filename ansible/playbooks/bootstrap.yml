@@ -1,9 +1,26 @@
 ---
-- name: Trick out Ubuntu server
+- name: Trick out Debian server
   hosts: all
   gather_facts: False
 
   tasks:
+    - name: Install desired packages
+      apt: >
+        package={{ item }}
+        state=present
+        update_cache=yes
+      with_items:
+        - htop
+        - tree
+        - jq
+        - fail2ban
+        - vim
+        - mosh
+        - ufw
+
+    - name: Get simple .vimrc
+      get_url: url=https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim dest=/root/.vimrc
+
     - name: Reset UFW firewall
       ufw:
         state=reset
@@ -24,6 +41,15 @@
         - 2376   # Docker daemon API port
         - 3376   # Swarm API port
         - 7946   # Serf port (libnetwork)
+     
+    - name: Open VXLAN and Serf UDP ports
+      ufw: >
+        rule=allow
+        port={{ item }}
+        proto=udp
+      with_items:
+        - 7946 # Serf
+        - 4789 # VXLAN
 
     - name: Set to deny incoming requests by default
       ufw: >
@@ -33,13 +59,11 @@
       ufw: >
         state=enabled
 
-    - name: Install desired packages
-      apt: >
-        package={{ item }}
-        state=present
-        update_cache=yes
-      with_items:
-        - htop
-        - tree
-        - jq
-        - fail2ban
+    - name: Set memory limit in GRUB
+      lineinfile: >
+        dest=/etc/default/grub
+        regexp=^GRUB_CMDLINE_LINUX_DEFAULT
+        line='GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=memory swapaccount=1"'
+
+    - name: Load new GRUB config
+      command: update-grub

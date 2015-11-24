@@ -1,0 +1,6 @@
+fahclient:
+  image: nathanleclaire/folding-at-home
+  cpu_shares: 50
+  environment:
+    - "FAH_PASSKEY"
+    - "affinity:com.docker.compose.service!=fahclient"

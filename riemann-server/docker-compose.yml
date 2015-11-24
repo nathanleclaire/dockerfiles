@@ -1,0 +1,21 @@
+riemannserver:
+  container_name: riemann-server
+  image: "nathanleclaire/riemann-server:article"
+  mem_limit: "1500m"
+  ports:
+    - "127.0.0.1:5556:5556"
+  restart: always
+riemanndash:
+  image: "nathanleclaire/riemann-dash:article"
+  mem_limit: "500m"
+  ports:
+    - "127.0.0.1:4567:4567"
+  restart: always
+riemannhealth:
+  image: "nathanleclaire/riemann-health:article"
+  pid: host
+  environment:
+    - "affinity:container!=*riemannhealth*"
+  volumes:
+    - "/etc/hostname:/etc/hostname:ro"
+  restart: always

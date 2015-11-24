@@ -3,10 +3,8 @@ provision:
   net: host
   volumes:
     - /root/.ssh:/hostssh
-  labels:
-    - "com.nathanleclaire.ansibleprovison"
   environment:
-    - affinity:label!=com.nathanleclaire.ansibleprovision
+    - affinity:container!=*provision*
 consul:
   image: progrium/consul
   hostname: consul

@@ -5,6 +5,7 @@
 
   tasks:
     - name: Install desired packages
+      become: true
       apt: >
         package={{ item }}
         state=present
@@ -19,18 +20,21 @@
         - ufw
 
     - name: Get simple .vimrc
-      get_url: url=https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim dest=/root/.vimrc
+      get_url: url=https://raw.githubusercontent.com/amix/vimrc/master/vimrcs/basic.vim dest=/home/admin/.vimrc
 
     - name: Reset UFW firewall
+      become: true
       ufw:
         state=reset
 
     - name: Allow SSH access on instance
+      become: true
       ufw: >
         rule=allow
         name=OpenSSH
 
     - name: Open Docker daemon, HTTP(S), and Swarm ports
+      become: true
       ufw: >
         rule=allow
         port={{ item }}
@@ -38,11 +42,13 @@
       with_items:
         - 80     # Default HTTP port
         - 443    # Default HTTPS port
-        - 2376   # Docker daemon API port
+        - 2375   # Docker daemon API port (non-TLS)
+        - 2376   # Docker daemon API port (TLS)
         - 3376   # Swarm API port
         - 7946   # Serf port (libnetwork)
      
     - name: Open VXLAN and Serf UDP ports
+      become: true
       ufw: >
         rule=allow
         port={{ item }}
@@ -52,18 +58,31 @@
         - 4789 # VXLAN
 
     - name: Set to deny incoming requests by default
+      become: true
       ufw: >
         default=deny
 
     - name: Turn on UFW
+      become: true
       ufw: >
         state=enabled
 
     - name: Set memory limit in GRUB
+      become: true
       lineinfile: >
         dest=/etc/default/grub
         regexp=^GRUB_CMDLINE_LINUX_DEFAULT
         line='GRUB_CMDLINE_LINUX_DEFAULT="cgroup_enable=memory swapaccount=1"'
 
     - name: Load new GRUB config
+      become: true
       command: update-grub
+
+    - name: Set hostname
+      become: true
+      hostname: name={{ inventory_hostname }}
+
+    - name: Set properly in /etc/hosts
+      become: true
+      lineinfile: dest=/etc/hosts regexp='^127\.0\.0\.1' line='127.0.0.1 {{ inventory_hostname }}' owner=root group=root mode=0644
+
